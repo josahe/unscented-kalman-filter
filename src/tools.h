@@ -20,6 +20,11 @@ public:
   virtual ~Tools();
 
   /**
+  * A helper method to normalise angles between +/- 180 degrees.
+  */
+  double NormaliseAngle(double angle);  
+
+  /**
   * A helper method to calculate RMSE.
   */
   VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);

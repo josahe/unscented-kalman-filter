@@ -2,6 +2,7 @@
 #define UKF_H
 
 #include "measurement_package.h"
+#include "tools.h"
 #include "Eigen/Dense"
 #include <vector>
 #include <string>
@@ -61,12 +62,20 @@ public:
   ///* State dimension
   int n_x_;
 
+  ///* Radar measurement dimension
+  int n_z_;
+
   ///* Augmented state dimension
   int n_aug_;
 
   ///* Sigma point spreading parameter
   double lambda_;
 
+  ///* Number of sigma points
+  int n_sig_;
+
+  // access to normalise function for angles
+  Tools tools;
 
   /**
    * Constructor
@@ -102,6 +111,16 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+  /**
+   * Additional UKF functions
+   */
+  void GenerateAugmentedSigmaPoints(MatrixXd* Xsig_aug);
+  void SigmaPointPrediction(MatrixXd Xsig_aug, double delta_t);
+  void PredictMeanAndCovariance();
+  void PredictRadarMeasurement(MatrixXd* Zsig, VectorXd* z_pred,
+    MatrixXd* S_pred);
+  void UpdateState(VectorXd z, MatrixXd Zsig, VectorXd z_pred, MatrixXd S_pred);
 };
 
 #endif /* UKF_H */
