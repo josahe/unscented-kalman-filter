@@ -183,9 +183,9 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   VectorXd z_pred = H * x_;
   VectorXd y = z.head(2) - z_pred;
   MatrixXd Ht = H.transpose();
-  MatrixXd S = H * P_ * Ht + R;
+  MatrixXd PHt = P_ * Ht; 
+  MatrixXd S = H * PHt + R;
   MatrixXd Si = S.inverse();
-  MatrixXd PHt = P_ * Ht;
   MatrixXd K = PHt * Si;
 
   //new estimate
@@ -275,6 +275,7 @@ void UKF::SigmaPointPrediction(MatrixXd Xsig_aug, double delta_t) {
   //predict sigma points
   for (int i = 0; i < (n_sig_); ++i) {
     //extract state variables for better readability
+    // TODO can define these variables as constants so compiler can optimise
     double px = Xsig_aug(0, i);
     double py = Xsig_aug(1, i);
     double v = Xsig_aug(2, i);
@@ -372,7 +373,7 @@ void UKF::PredictRadarMeasurement(MatrixXd* Zsig, VectorXd* z_pred,
            phi,    //angle
            rhodot; //radial velocity
 
-    rho = sqrt(pow(px, 2) + pow(py, 2));
+    rho = sqrt(pow(px, 2) + pow(py, 2)); // TODO atan2(0.0,0.0) is undefined
     phi = atan2(py, px);
 
     //angle normalisation
